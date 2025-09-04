@@ -1,0 +1,69 @@
+MIT License
+
+Copyright (c) 2025 Jakob - Whoop Alternative Project
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Third-Party Licenses
+
+This project uses various third-party libraries and components:
+
+### Firmware Dependencies
+- **Zephyr RTOS**: Apache License 2.0
+- **nRF Connect SDK**: Nordic 5-Clause BSD License
+- **ARM CMSIS**: Apache License 2.0
+
+### Mobile App Dependencies
+- **Flutter SDK**: BSD 3-Clause License
+- **flutter_blue_plus**: BSD 3-Clause License
+- **fl_chart**: BSD 3-Clause License
+
+### Hardware Components
+- **MAX86141**: Maxim Integrated (Analog Devices) - Reference designs available
+- **BMA400**: Bosch Sensortec - Reference designs available
+- **nRF52840**: Nordic Semiconductor - Reference designs available
+
+## Medical Disclaimer
+
+THIS SOFTWARE AND HARDWARE ARE PROVIDED FOR EDUCATIONAL AND WELLNESS PURPOSES ONLY. 
+THEY ARE NOT INTENDED FOR MEDICAL DIAGNOSIS, TREATMENT, OR MONITORING OF MEDICAL CONDITIONS.
+
+THE DEVICE AND SOFTWARE:
+- Are NOT FDA approved medical devices
+- Should NOT be used for medical diagnosis
+- Should NOT replace professional medical advice
+- May produce inaccurate readings
+- Are intended for fitness and wellness tracking only
+
+ALWAYS CONSULT WITH A QUALIFIED HEALTHCARE PROVIDER FOR MEDICAL CONCERNS.
+
+## Data Privacy Notice
+
+This project is designed with privacy in mind:
+- All health data is stored locally on your device by default
+- No data is transmitted to external servers without explicit user consent
+- Users have full control over their data export and deletion
+- The project complies with GDPR and similar privacy regulations
+
+## Export Control Notice
+
+This project may contain technology subject to export controls. Users are responsible 
+for complying with applicable export control laws and regulations in their jurisdiction.

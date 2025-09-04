@@ -1,0 +1,254 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  FLUTTER_VERSION: 3.16.0
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Generate changelog between tags
+        if [ $(git tag | wc -l) -gt 1 ]; then
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1)
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "CHANGELOG=Initial release" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## What's Changed
+          ${{ steps.changelog.outputs.CHANGELOG }}
+          
+          ## Assets
+          - **Firmware**: Flash files for nRF52840
+          - **Mobile App**: APK for Android devices
+          - **Documentation**: Complete project documentation
+          
+          ## Installation
+          See the [installation guide](docs/user-guide/getting-started.md) for setup instructions.
+          
+          ## ⚠️ Important Notes
+          - This is a wellness/fitness device, not a medical device
+          - Always consult healthcare providers for medical concerns
+          - See safety warnings in documentation before use
+        draft: false
+        prerelease: false
+
+  build-firmware:
+    name: Build and Release Firmware
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install West
+      run: pip install west
+
+    - name: Initialize West workspace
+      run: |
+        west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.5.0
+        west update
+        west zephyr-export
+
+    - name: Install dependencies
+      run: pip install -r zephyr/scripts/requirements.txt
+
+    - name: Build firmware
+      run: |
+        cd firmware/app
+        west build -b nrf52840dk_nrf52840 --pristine
+
+    - name: Create firmware package
+      run: |
+        mkdir firmware-release
+        cp firmware/app/build/zephyr/zephyr.hex firmware-release/whoop-alternative-${{ github.ref_name }}.hex
+        cp firmware/app/build/zephyr/zephyr.bin firmware-release/whoop-alternative-${{ github.ref_name }}.bin
+        cp firmware/app/build/zephyr/zephyr.elf firmware-release/whoop-alternative-${{ github.ref_name }}.elf
+        
+        # Create installation instructions
+        cat > firmware-release/INSTALL.md << EOF
+        # Firmware Installation
+        
+        ## Prerequisites
+        - nRF52840 Development Kit or compatible device
+        - nRF Command Line Tools
+        - J-Link debugger
+        
+        ## Installation
+        \`\`\`bash
+        # Flash the firmware
+        nrfjprog --program whoop-alternative-${{ github.ref_name }}.hex --chiperase
+        nrfjprog --reset
+        \`\`\`
+        
+        ## Verification
+        - Device should start advertising as "WhoopAlt"
+        - LED should indicate successful boot
+        - Check RTT output for debug information
+        EOF
+        
+        cd firmware-release
+        zip -r ../whoop-alternative-firmware-${{ github.ref_name }}.zip .
+
+    - name: Upload firmware release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.release_upload_url }}
+        asset_path: whoop-alternative-firmware-${{ github.ref_name }}.zip
+        asset_name: whoop-alternative-firmware-${{ github.ref_name }}.zip
+        asset_content_type: application/zip
+
+  build-mobile-app:
+    name: Build and Release Mobile App
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+
+    - name: Get dependencies
+      run: |
+        cd app/mobile
+        flutter pub get
+
+    - name: Build APK
+      run: |
+        cd app/mobile
+        flutter build apk --release
+
+    - name: Build App Bundle
+      run: |
+        cd app/mobile
+        flutter build appbundle --release
+
+    - name: Create mobile app package
+      run: |
+        mkdir mobile-app-release
+        cp app/mobile/build/app/outputs/flutter-apk/app-release.apk mobile-app-release/whoop-alternative-${{ github.ref_name }}.apk
+        cp app/mobile/build/app/outputs/bundle/release/app-release.aab mobile-app-release/whoop-alternative-${{ github.ref_name }}.aab
+        
+        # Create installation instructions
+        cat > mobile-app-release/INSTALL.md << EOF
+        # Mobile App Installation
+        
+        ## Android APK Installation
+        1. Download \`whoop-alternative-${{ github.ref_name }}.apk\`
+        2. Enable "Install from unknown sources" in Android settings
+        3. Open the APK file and follow installation prompts
+        
+        ## Requirements
+        - Android 6.0 (API level 23) or higher
+        - Bluetooth Low Energy (BLE) support
+        - Location permission for BLE scanning
+        
+        ## First Setup
+        1. Open the app
+        2. Grant required permissions
+        3. Follow the device pairing guide
+        4. Complete initial setup and calibration
+        EOF
+        
+        cd mobile-app-release
+        zip -r ../whoop-alternative-mobile-${{ github.ref_name }}.zip .
+
+    - name: Upload mobile app release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.release_upload_url }}
+        asset_path: whoop-alternative-mobile-${{ github.ref_name }}.zip
+        asset_name: whoop-alternative-mobile-${{ github.ref_name }}.zip
+        asset_content_type: application/zip
+
+  build-documentation:
+    name: Build and Release Documentation
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install mkdocs mkdocs-material
+
+    - name: Build documentation
+      run: |
+        cd docs
+        mkdocs build
+
+    - name: Create documentation package
+      run: |
+        cd docs
+        zip -r ../whoop-alternative-docs-${{ github.ref_name }}.zip site/
+
+    - name: Upload documentation release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.release_upload_url }}
+        asset_path: whoop-alternative-docs-${{ github.ref_name }}.zip
+        asset_name: whoop-alternative-docs-${{ github.ref_name }}.zip
+        asset_content_type: application/zip
+
+  notify-release:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs: [create-release, build-firmware, build-mobile-app, build-documentation]
+    
+    steps:
+    - name: Send notification
+      run: |
+        echo "Release ${{ github.ref_name }} has been created successfully!"
+        echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"

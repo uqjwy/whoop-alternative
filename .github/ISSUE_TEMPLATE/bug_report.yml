@@ -1,0 +1,105 @@
+name: Bug Report
+description: Report a bug in the Whoop Alternative project
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible.
+        
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the project is affected?
+      options:
+        - Firmware (nRF52840)
+        - Mobile App (Flutter)
+        - Hardware Design
+        - Documentation
+        - Build System
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: Describe the expected behavior...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide details about your environment
+      placeholder: |
+        - Device: [e.g. nRF52840-DK, iPhone 12, Samsung Galaxy S21]
+        - OS: [e.g. iOS 15.0, Android 12, macOS 12.0]
+        - App Version: [e.g. 1.0.0]
+        - Firmware Version: [e.g. 0.1.0]
+        - Development Environment: [e.g. nRF Connect SDK 2.0.0, Flutter 3.0.0]
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Please copy and paste any relevant log output
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: Screenshots, videos, or additional information...
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Acknowledgments
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this bug hasn't been reported before
+          required: true
+        - label: This issue is related to the Whoop Alternative project and not a general support question
+          required: true
+        - label: I understand this is an open-source project and not a commercial product
+          required: true
