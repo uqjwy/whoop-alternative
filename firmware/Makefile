@@ -21,7 +21,7 @@ BUILD_DIR = build
 
 .PHONY: all clean ppg-test imu-test health-test
 
-all: ppg-test imu-test
+all: ppg-test imu-test health-test
 
 # Create build directory
 $(BUILD_DIR):
@@ -45,7 +45,7 @@ imu-test: $(BUILD_DIR)
 health-test: $(BUILD_DIR)
 	@echo "🩺 Compiling Health Monitor Test..."
 	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINES) \
-		tests/health_test_app.c \
+		tests/health_host_test.c \
 		-lm -o $(BUILD_DIR)/health_test
 
 clean:
@@ -64,9 +64,11 @@ run-health-test: health-test
 	@echo "🩺 Running Health Monitor Test..."
 	./$(BUILD_DIR)/health_test
 
-run-all-tests: ppg-test imu-test
+run-all-tests: ppg-test imu-test health-test
 	@echo "🧪 Running All Firmware Tests..."
 	@echo ""
 	@$(MAKE) run-ppg-test
 	@echo ""
 	@$(MAKE) run-imu-test
+	@echo ""
+	@$(MAKE) run-health-test
