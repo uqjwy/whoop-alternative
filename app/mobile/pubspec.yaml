@@ -43,8 +43,8 @@ dependencies:
   path_provider: ^2.1.1
   share_plus: ^7.2.1
   
-  # Notifications
-  flutter_local_notifications: ^15.1.1
+  # Notifications (temporarily disabled due to Android compatibility)
+  # flutter_local_notifications: ^15.1.1
   
   # Utils
   intl: ^0.18.1
