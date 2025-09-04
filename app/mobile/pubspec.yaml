@@ -26,6 +26,9 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.7
   
+  # Navigation
+  go_router: ^12.1.1
+  
   # Charts and Visualization
   fl_chart: ^0.63.0
   syncfusion_flutter_charts: ^22.2.12
