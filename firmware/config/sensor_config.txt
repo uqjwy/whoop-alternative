@@ -1,0 +1,198 @@
+# Sensor Configuration File
+# This enables sensor-agnostic operation and easy migration
+# Example: Change ppg_sensor=MAX86141 to migrate from MAX30101
+
+[system]
+# Key setting for sensor migration!
+ppg_sensor=MAX30101
+imu_sensor=BMA400
+
+# Configuration profile
+profile=default
+priority=accuracy
+debug_enable=true
+log_level=2
+data_logging=true
+log_filename=sensor_data.log
+
+# Timing synchronization
+base_sample_rate=100
+timestamp_sync=true
+clock_offset_ms=0
+
+[ppg_config]
+# PPG sensor settings (adjust when migrating sensors)
+sample_rate=100
+led_current_red=25
+led_current_ir=25
+led_current_green=0
+led_current_uv=0
+
+# LED slot mapping (physical to logical)
+slot_map_0=0
+slot_map_1=1
+slot_map_2=2
+slot_map_3=3
+
+# Acquisition parameters
+pulse_width=411
+adc_range=4096
+avg_samples=1
+
+# FIFO settings
+fifo_enable=true
+fifo_almost_full=17
+
+# Additional features
+temp_enable=true
+proximity_enable=false
+
+# AFE-specific settings (for MAX86141)
+tia_gain=0
+integrator_gain=0
+
+[imu_config]
+# IMU sensor settings
+accel_range=4
+accel_bandwidth=100
+gyro_range=0
+gyro_bandwidth=0
+sample_rate=100
+
+# Motion detection
+interrupt_enable=false
+interrupt_threshold=128
+
+[calibration]
+# Sensor-specific calibration data
+spo2_calib_a=1.0
+spo2_calib_b=0.0
+spo2_calib_c=0.0
+spo2_calib_d=0.0
+
+temp_offset=0.0
+
+accel_bias_x=0.0
+accel_bias_y=0.0
+accel_bias_z=0.0
+
+gyro_bias_x=0.0
+gyro_bias_y=0.0
+gyro_bias_z=0.0
+
+# =============================================================================
+# Profile Configurations (alternative settings)
+# =============================================================================
+
+[profile_low_power]
+ppg_sample_rate=25
+ppg_led_current_red=10
+ppg_led_current_ir=10
+ppg_avg_samples=4
+imu_sample_rate=25
+imu_interrupt_enable=true
+
+[profile_high_accuracy]
+ppg_sample_rate=200
+ppg_led_current_red=50
+ppg_led_current_ir=50
+ppg_led_current_green=25
+ppg_avg_samples=1
+ppg_fifo_almost_full=32
+imu_sample_rate=200
+imu_accel_range=4
+imu_gyro_range=500
+
+[profile_exercise]
+ppg_sample_rate=100
+ppg_led_current_red=30
+ppg_led_current_ir=30
+ppg_led_current_green=15
+ppg_proximity_enable=true
+imu_accel_range=8
+imu_gyro_range=1000
+imu_interrupt_enable=true
+imu_interrupt_threshold=64
+
+[profile_sleep]
+ppg_sample_rate=50
+ppg_led_current_red=15
+ppg_led_current_ir=15
+ppg_avg_samples=2
+imu_sample_rate=10
+imu_accel_range=2
+
+# =============================================================================
+# Migration Examples and Guidelines
+# =============================================================================
+
+# MIGRATION EXAMPLE: MAX30101 → MAX86141
+# To migrate from integrated sensor to AFE:
+#
+# 1. Change sensor type:
+#    ppg_sensor=MAX86141
+#
+# 2. Increase LED currents (external LEDs need more power):
+#    led_current_red=50
+#    led_current_ir=50
+#
+# 3. Configure AFE-specific settings:
+#    tia_gain=50000
+#    integrator_gain=1
+#    proximity_enable=true
+#
+# 4. Adjust ADC range (higher resolution):
+#    adc_range=262144
+#
+# 5. Review and tune signal processing parameters
+#    (mainly filter cutoffs and SpO2 calibration)
+
+# MIGRATION EXAMPLE: BMA400 → BMI270
+# To upgrade IMU sensor:
+#
+# 1. Change sensor type:
+#    imu_sensor=BMI270
+#
+# 2. Enable gyroscope:
+#    gyro_range=500
+#    gyro_bandwidth=100
+#
+# 3. Update motion detection if needed:
+#    interrupt_threshold=64
+
+# SENSOR-SPECIFIC NOTES:
+#
+# MAX30101 (Integrated):
+# - Built-in LEDs and photodiode
+# - 15-bit ADC (0-32768 range)
+# - No TIA gain settings
+# - Limited to Red/IR channels effectively
+#
+# MAX86141 (AFE):
+# - External LEDs and photodiodes required
+# - 19-bit ADC (0-524288 range)
+# - Configurable TIA and integrator gains
+# - Up to 4 channels with flexible LED assignment
+# - Proximity detection available
+#
+# BMA400:
+# - Accelerometer only
+# - Ultra-low power design
+# - Simple motion detection
+#
+# BMI270:
+# - 6-axis (accel + gyro)
+# - Advanced motion processing
+# - Step counter, activity recognition
+
+# SIGNAL PROCESSING CONSIDERATIONS:
+#
+# When migrating sensors, mainly these need adjustment:
+# 1. DC removal parameters (based on new ADC range)
+# 2. Bandpass filter cutoffs (may need retuning)
+# 3. SpO2 calibration constants (wavelength dependent)
+# 4. Motion artifact detection thresholds
+# 5. AGC/ALC parameters for LED current control
+#
+# The core pipeline stays the same:
+# Raw Data → DC Removal → Filtering → Motion Compensation → Feature Extraction
