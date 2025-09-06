@@ -39,7 +39,7 @@ hardware/
 │   │   ├── case_top.step  # Upper case part
 │   │   ├── case_bottom.step # Lower case part
 │   │   └── gaskets.step   # Sealing gaskets
-│   ├── band/              # Wrist/arm band
+│   ├── band/              # Upper arm band
 │   │   ├── band_main.step # Main band structure
 │   │   ├── clasp.step     # Clasp mechanism
 │   │   └── materials.txt  # Band material specifications
