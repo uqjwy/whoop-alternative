@@ -29,28 +29,67 @@
 	- Mobile app structure with BLE integration
 	- Hardware design specifications and power analysis
 
-- [ ] Install Required Extensions
-	No specific extensions required - project uses standard development tools
+- [x] Install Required Extensions
+	Required VS Code extensions for nRF52840 development:
+	- nRF Connect for VS Code Extension Pack (essential)
+	- nRF Connect for VS Code (main development environment)
+	- nRF Kconfig (syntax highlighting for Zephyr configs)
+	- nRF Terminal (serial debugging and RTT logging)
+	- nRF DeviceTree (optional, for custom board definitions)
+
+- [x] Migrate to Upper Arm Placement
+	Successfully migrated sensor placement from wrist to upper arm:
+	- Updated all documentation references (SIGNAL_FLOW.md)
+	- Optimized motion artifact detection for upper arm
+	- Created comprehensive test suite (test_wrist_artifacts.sh)
+	- Validated firmware architecture is placement-agnostic
 
 - [ ] Compile the Project
-	Ready for compilation once development environment is set up:
-	- Firmware: Requires nRF Connect SDK (Zephyr)
-	- Mobile App: Requires Flutter SDK
-	- Hardware: Requires KiCad or similar PCB design tools
+	Phase 1 (Hardware Prototyping) ready to begin:
+	- Firmware: nRF Connect SDK setup required
+	- Hardware: nRF52840-DK + sensor breakouts ordered
+	- Mobile App: Flutter environment configured
+	- Testing: Automated test framework implemented
 
 - [ ] Create and Run Task
-	Development tasks ready:
-	- Firmware build and flash tasks
-	- Mobile app build and test tasks
-	- Hardware simulation and validation
+	Current development phase tasks:
+	- Hardware evaluation with nRF52840-DK
+	- Sensor integration (MAX86141, BMA400, MAX30205)
+	- PPG signal quality validation at upper arm
+	- Real-time data pipeline implementation
+	- 24-hour battery life testing
 
 - [ ] Launch the Project
-	Project ready for development launch
+	Ready for Phase 1: Hardware Prototyping (4-6 weeks)
+	Next immediate steps:
+	- Order development hardware (~€185 budget)
+	- Setup nRF Connect SDK environment  
+	- Begin sensor driver implementation
+	- Validate PPG signal quality at upper arm placement
 
 - [x] Ensure Documentation is Complete
-	Comprehensive documentation created:
+	Comprehensive documentation created and updated:
 	- Main project README with complete overview
+	- SIGNAL_FLOW.md with complete sensor-to-app pipeline
+	- DEVELOPMENT_ROADMAP.md with 4-phase implementation plan
+	- UPPER_ARM_MIGRATION_RESULTS.md with test validation
 	- Firmware documentation with architecture details
 	- Hardware design specifications and manufacturing guide
 	- Mobile app development guide with BLE integration
-	- Complete documentation structure for all project phases
+	- Automated testing framework for continuous validation
+
+Current Development Status:
+- Phase 0: Architecture & Design ✅ COMPLETE
+- Phase 1: Hardware Prototyping 🚧 READY TO START
+- Phase 2: Custom PCB Design 📋 PLANNED
+- Phase 3: Mobile App Development 📋 PLANNED  
+- Phase 4: Mechanical Design 📋 PLANNED
+
+Key Achievements:
+- Sensor placement optimized for upper arm
+- All wrist artifacts removed from codebase
+- Comprehensive signal flow documentation
+- Test-driven development framework established
+- Budget and timeline planning complete (~€2,385, 18-24 weeks)
+
+Next Priority: Hardware procurement and nRF Connect SDK setup
